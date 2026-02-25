@@ -151,6 +151,21 @@ canvas{max-height:320px}
 #tab-overview .kpi-expense .kpi-value { color:#dc2626 !important; }
 #tab-overview .kpi-net .kpi-value { color:#b45309 !important; }
 
+
+.chart-addenda, .addenda-strip, .chart-legend-strip {
+    color: #333 !important;
+    background: #f5f5f5 !important;
+}
+.chart-addenda *, .addenda-strip *, .chart-legend-strip * {
+    color: #333 !important;
+}
+
+
+#expenseDonut, #vendorPieChart {
+    width: 380px !important;
+    height: 380px !important;
+}
+
 </style>
 
 <style>
@@ -203,7 +218,7 @@ canvas{max-height:320px}
       <div class="warning-text">Transactions Need Review — Click to Resolve</div>
       <div class="warning-sub">Multiple items need property assignment · Amazon charges (82) · Unusual amounts · Duplicate billing detected</div>
     </div>
-    <span style="margin-left:auto;color:#fbbf24;font-weight:700">View All →</span>
+    <span style="margin-left:auto;color:#444;font-weight:700">View All →</span>
   </div>
 
   <div class="progress-bar-wrap">
@@ -282,7 +297,7 @@ canvas{max-height:320px}
             <div style="width:20px;height:3px;background:#3b82f6;border-radius:2px;flex-shrink:0;margin:4px 0;"></div>
             <span><strong>Blue Line</strong> &mdash; Cumulative YTD net cash flow (running total after mortgages)</span>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#aaa;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;">
             <div style="width:16px;height:12px;background:#86efac;border-radius:3px;flex-shrink:0;opacity:0.6;"></div>
             <span><strong>Ghost Bars</strong> &mdash; Visual depth overlay (same values, lighter shade for 3D effect)</span>
           </div>
@@ -296,14 +311,14 @@ canvas{max-height:320px}
     </div>
     <div class="chart-card">
       <div class="chart-title">🍩 Expense Breakdown by Category</div>
-      <canvas id="expenseDonut" style="min-height:380px;width:100%"></canvas>
+      <div style="display:flex;justify-content:center;align-items:center;"><canvas id="expenseDonut" style="width:380px!important;height:380px!important;max-width:380px;max-height:380px"></canvas></div>
     </div>
   </div>
   <!-- Revenue by Platform Pie Chart -->
   <div class="chart-row" style="margin-bottom:20px">
     <div class="chart-card">
       <div class="chart-title">🥧 Revenue by Platform — YTD 2026</div>
-      <canvas id="vendorPieChart" style="min-height:380px;width:100%"></canvas>
+      <div style="display:flex;justify-content:center;align-items:center;"><canvas id="vendorPieChart" style="width:380px!important;height:380px!important;max-width:380px;max-height:380px"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">📊 PadSplit Income — Jan vs Feb 2026</div>
@@ -400,7 +415,7 @@ canvas{max-height:320px}
 
   <!-- Electric APS -->
   <div class="card">
-    <div class="card-title" style="color:#fbbf24">⚡ APS Electric</div>
+    <div class="card-title" style="color:#444">⚡ APS Electric</div>
     <div class="table-wrap">
     <table class="data-table">
       <thead><tr><th>Property</th><th>Jan 2026</th><th>Feb 2026</th><th>AutoPay</th><th>Notes</th></tr></thead>
@@ -416,7 +431,7 @@ canvas{max-height:320px}
 
   <!-- Electric SRP -->
   <div class="card">
-    <div class="card-title" style="color:#fbbf24">⚡ SRP Electric</div>
+    <div class="card-title" style="color:#444">⚡ SRP Electric</div>
     <div class="table-wrap">
     <table class="data-table">
       <thead><tr><th>Property</th><th>Jan 2026</th><th>Feb 2026</th><th>Notes</th></tr></thead>
@@ -430,7 +445,7 @@ canvas{max-height:320px}
 
   <!-- Gas -->
   <div class="card">
-    <div class="card-title" style="color:#f97316">🔥 Southwest Gas</div>
+    <div class="card-title" style="color:#444">🔥 Southwest Gas</div>
     <div class="table-wrap">
     <table class="data-table">
       <thead><tr><th>Property</th><th>Jan 2026</th><th>Feb 2026</th></tr></thead>
@@ -445,7 +460,7 @@ canvas{max-height:320px}
 
   <!-- Internet/Phone Cox -->
   <div class="card">
-    <div class="card-title" style="color:#a855f7">🌐 Cox Internet &amp; Phone</div>
+    <div class="card-title" style="color:#444">🌐 Cox Internet &amp; Phone</div>
     <div class="table-wrap">
     <table class="data-table">
       <thead><tr><th>Property</th><th>Monthly</th><th>AutoPay</th><th>Notes</th></tr></thead>
@@ -583,7 +598,7 @@ canvas{max-height:320px}
       <div class="prop-stat"><div class="prop-stat-label">Tenant</div><div class="prop-stat-value" style="font-size:14px">Ian Decker</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Est. Monthly NOI</div><div class="prop-stat-value noi-pos">+$62</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Rate / Lender</div><div class="prop-stat-value" style="font-size:13px">7.375% · Mtn America</div></div>
-      <div class="prop-stat"><div class="prop-stat-label">Refi Opportunity</div><div class="prop-stat-value" style="font-size:12px;color:#fbbf24">Monitor rates</div></div>
+      <div class="prop-stat"><div class="prop-stat-label">Refi Opportunity</div><div class="prop-stat-value" style="font-size:12px;color:#444">Monitor rates</div></div>
     </div>
   </div>
 
@@ -622,7 +637,7 @@ canvas{max-height:320px}
       <div class="prop-stat"><div class="prop-stat-label">PadSplit Jan</div><div class="prop-stat-value income">$3,628</div></div>
       <div class="prop-stat"><div class="prop-stat-label">PadSplit Feb est.</div><div class="prop-stat-value income">$3,177</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Selyna (Rm 4) Jan</div><div class="prop-stat-value income">$1,125</div></div>
-      <div class="prop-stat"><div class="prop-stat-label">Selyna (Rm 4) Feb ⚠️</div><div class="prop-stat-value" style="color:#fbbf24">$515 (partial)</div></div>
+      <div class="prop-stat"><div class="prop-stat-label">Selyna (Rm 4) Feb ⚠️</div><div class="prop-stat-value" style="color:#444">$515 (partial)</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Electric (APS)</div><div class="prop-stat-value expense">$77–$96</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Gas (SW Gas)</div><div class="prop-stat-value expense">$90–$99</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Water</div><div class="prop-stat-value expense">$126/mo</div></div>
@@ -647,7 +662,7 @@ canvas{max-height:320px}
       <div class="prop-stat"><div class="prop-stat-label">Rent Perfect (2 rooms)</div><div class="prop-stat-value income">$1,944</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Electric (APS)</div><div class="prop-stat-value expense">$214–$289</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Gas (SW Gas)</div><div class="prop-stat-value expense">$95–$99</div></div>
-      <div class="prop-stat"><div class="prop-stat-label">Internet (Cox ×2)</div><div class="prop-stat-value expense" style="color:#f87171">$215 ⚠️ Dup!</div></div>
+      <div class="prop-stat"><div class="prop-stat-label">Internet (Cox ×2)</div><div class="prop-stat-value expense" style="color:#444">$215 ⚠️ Dup!</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Water</div><div class="prop-stat-value expense">$109/mo</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Est. Monthly NOI</div><div class="prop-stat-value noi-pos">+$2,900+</div></div>
     </div>
@@ -668,7 +683,7 @@ canvas{max-height:320px}
       <div class="prop-stat"><div class="prop-stat-label">PadSplit Feb est.</div><div class="prop-stat-value income">$3,530</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Airbnb (Rm 7)</div><div class="prop-stat-value income">$1,236</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Isaiah Rm 6 · Lilliana pays RP</div><div class="prop-stat-value income">$904</div></div>
-      <div class="prop-stat"><div class="prop-stat-label">Electric (SRP) ⚠️</div><div class="prop-stat-value expense" style="color:#f87171">$293/mo</div></div>
+      <div class="prop-stat"><div class="prop-stat-label">Electric (SRP) ⚠️</div><div class="prop-stat-value expense" style="color:#444">$293/mo</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Gas (SW Gas)</div><div class="prop-stat-value expense">$64/mo</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Internet (Cox)</div><div class="prop-stat-value expense">$80/mo</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Water</div><div class="prop-stat-value expense">$105/mo</div></div>
@@ -691,7 +706,7 @@ canvas{max-height:320px}
     <div class="note-banner" style="margin-top:12px">🔄 <strong>Refinancing in Progress:</strong> New loan $535,500 at 6.75% · P&amp;I $3,473.24 + $339 T/I/A = $3,812 total/mo · Significant improvement from current 10.5% I/O</div>
     <div class="prop-grid" style="margin-top:12px">
       <div class="prop-stat"><div class="prop-stat-label">Current Mortgage</div><div class="prop-stat-value expense">$3,763/mo</div></div>
-      <div class="prop-stat"><div class="prop-stat-label">New Payment (post-refi)</div><div class="prop-stat-value" style="color:#fbbf24">$3,812/mo</div></div>
+      <div class="prop-stat"><div class="prop-stat-label">New Payment (post-refi)</div><div class="prop-stat-value" style="color:#444">$3,812/mo</div></div>
       <div class="prop-stat"><div class="prop-stat-label">PadSplit Jan (ramping)</div><div class="prop-stat-value income">$366</div></div>
       <div class="prop-stat"><div class="prop-stat-label">PadSplit Feb est.</div><div class="prop-stat-value income">$2,529</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Airbnb (Rm 8-9)</div><div class="prop-stat-value income">$2,742</div></div>
@@ -700,7 +715,7 @@ canvas{max-height:320px}
       <div class="prop-stat"><div class="prop-stat-label">Electric (APS)</div><div class="prop-stat-value expense">$59–$69</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Internet (Cox)</div><div class="prop-stat-value expense">$70/mo</div></div>
       <div class="prop-stat"><div class="prop-stat-label">Water</div><div class="prop-stat-value expense">$79/mo</div></div>
-      <div class="prop-stat"><div class="prop-stat-label">Est. Monthly NOI</div><div class="prop-stat-value" style="color:#fbbf24">Ramping Up</div></div>
+      <div class="prop-stat"><div class="prop-stat-label">Est. Monthly NOI</div><div class="prop-stat-value" style="color:#444">Ramping Up</div></div>
     </div>
   </div>
 </div>
@@ -714,7 +729,7 @@ canvas{max-height:320px}
     <span class="pending-counter" id="pendingCount">Pending Changes: 0</span>
     <button class="copy-btn" onclick="copyChangesSummary()">📋 Copy Changes Summary</button>
   </div>
-  <div class="note-banner" style="border-color:#f87171">🔴 Total unresolved value: <strong id="unresolvedTotal">calculating...</strong> · Resolve items below and click "Copy Changes Summary" to send updates for processing.</div>
+  <div class="note-banner" style="border-color:#444">🔴 Total unresolved value: <strong id="unresolvedTotal">calculating...</strong> · Resolve items below and click "Copy Changes Summary" to send updates for processing.</div>
 
   <div class="review-group">
     <div class="review-group-title">🔴 Needs Property Assignment — Unassigned Expenses</div>
@@ -777,7 +792,7 @@ canvas{max-height:320px}
       <div class="review-row-header">
         <span class="review-date">Feb 6, 2026</span>
         <span class="review-desc">Selyna Venmo — 38th Dr Rm 4 (unusually low)</span>
-        <span class="review-amount" style="color:#fbbf24">$52.50</span>
+        <span class="review-amount" style="color:#444">$52.50</span>
         <span class="badge badge-red" id="status-sel1">Needs Review</span>
       </div>
       <div class="review-why">Selyna's February 6th payment of $52.50 is much less than her usual $462.50 semi-monthly base amount. Is this a partial payment, a late fee only, or did she pay the rest a different way this period?</div>
@@ -895,7 +910,7 @@ canvas{max-height:320px}
     <div class="opt-body">
       <div class="opt-title">25th St Electric Bill Too High — Mini Split Scheduling Before Summer</div>
       <div class="opt-desc">SRP electric at 25th St is significantly higher than comparable PadSplit properties. Each room has its own mini split. Without schedules, residents leave them running on low temps all day. Set auto-off schedules NOW before summer heat arrives and bills double.</div>
-      <div style="background:#0d1b2e;border-radius:8px;padding:12px;margin:10px 0;font-size:13px;color:#e8eaf0;line-height:1.8">
+      <div style="background:#0d1b2e;border-radius:8px;padding:12px;margin:10px 0;font-size:13px;color:#444;line-height:1.8">
         <strong style="color:#c9a84c">📅 Recommended Schedule:</strong><br>
         • <strong>Weekdays 9am–4pm:</strong> Auto-off (most residents are out)<br>
         • <strong>Nights:</strong> Set to 74°F minimum, not 68°F — saves ~30%<br>
@@ -1251,7 +1266,7 @@ canvas{max-height:320px}
     <div class="how-to-sub">If you ever need to update this dashboard manually — without AI assistance — here's exactly how to do it.</div>
 
     <div style="background:#0a1628;border:1px solid #c9a84c;border-radius:10px;padding:20px 24px;margin-bottom:24px">
-      <div style="font-size:15px;font-weight:700;color:#c9a84c;margin-bottom:10px">📁 Where Everything Lives</div>
+      <div style="font-size:15px;font-weight:700;color:#444;margin-bottom:10px">📁 Where Everything Lives</div>
       <ul style="color:#e8eaf0;font-size:13px;line-height:2;margin:0;padding-left:18px">
         <li><strong>This dashboard file</strong> is stored on GitHub at:<br>
           <code style="background:#0d1b2e;padding:3px 8px;border-radius:4px;color:#c9a84c">github.com/thrivewellCL/dashboard</code> → file named <code style="background:#0d1b2e;padding:3px 8px;border-radius:4px;color:#c9a84c">index.html</code></li>
@@ -1289,7 +1304,7 @@ canvas{max-height:320px}
 
     <div class="how-to-title" style="font-size:15px;margin-bottom:8px;margin-top:24px">💡 Alternative: Use Another AI Tool</div>
     <div style="background:#0a1628;border:1px solid #2a3a50;border-radius:10px;padding:18px 22px;margin-bottom:24px">
-      <p style="color:#e8eaf0;font-size:13px;line-height:1.8;margin:0 0 10px">If you use another AI assistant (ChatGPT, Claude, etc.), you can update this dashboard by:</p>
+      <p style="color:#444;font-size:13px;line-height:1.8;margin:0 0 10px">If you use another AI assistant (ChatGPT, Claude, etc.), you can update this dashboard by:</p>
       <ol style="color:#e8eaf0;font-size:13px;line-height:2;margin:0;padding-left:18px">
         <li>Download the <strong>index.html</strong> file from GitHub (click the file → click download icon)</li>
         <li>Upload it to any AI chat along with your new bank statements</li>
@@ -1312,7 +1327,7 @@ canvas{max-height:320px}
           <tr><td><strong>Google Calendar</strong></td><td>ferraragroupltd@gmail.com</td><td>Monthly statement reminders (1st–3rd)</td></tr>
         </tbody>
       </table>
-      <p style="color:#e05252;font-size:12px;margin:12px 0 0">⚠️ <strong>Save these credentials in a password manager or secure note.</strong> Without GitHub access you cannot update the dashboard.</p>
+      <p style="color:#444;font-size:12px;margin:12px 0 0">⚠️ <strong>Save these credentials in a password manager or secure note.</strong> Without GitHub access you cannot update the dashboard.</p>
     </div>
 
   </div>
@@ -1514,7 +1529,7 @@ function renderExpenses(search, cat, prop, month) {
     const flag = e.review ? '<span class="badge badge-red">⚠️ Review</span>' : '';
     const amt = e.income ? '<span style="color:#4ade80">+$' + e.amount.toFixed(2) + '</span>' : '$' + e.amount.toFixed(2);
     if (!e.income) total += e.amount;
-    rows += '<tr class="' + cls + '"><td>' + e.date + '</td><td>' + e.desc + '</td><td>' + amt + '</td><td>' + e.cat + '</td><td>' + (e.prop || '<span style="color:#fbbf24">Unassigned</span>') + '</td><td>' + e.acct + '</td><td>' + flag + '</td></tr>';
+    rows += '<tr class="' + cls + '"><td>' + e.date + '</td><td>' + e.desc + '</td><td>' + amt + '</td><td>' + e.cat + '</td><td>' + (e.prop || '<span style="color:#444">Unassigned</span>') + '</td><td>' + e.acct + '</td><td>' + flag + '</td></tr>';
   });
   tbody.innerHTML = rows || '<tr><td colspan="7" style="text-align:center;color:#8899aa;padding:20px">No matching transactions</td></tr>';
   const tot = document.getElementById('expTotal');
@@ -1583,7 +1598,7 @@ function initDashboard() {
       responsive:true, maintainAspectRatio:false,
       plugins: {
         datalabels: {
-          anchor:'end', align:'end', color:'#e8eaf0', font:{size:11,weight:'bold'},
+          anchor:'end', align:'end', color:'#222', font:{size:11,weight:'bold'},
           formatter: v => '$'+v.toLocaleString()
         },
         legend:{ labels:{color:'#e8eaf0', padding:16, font:{size:12}} },
@@ -1638,7 +1653,7 @@ function initDashboard() {
       },
       plugins:[centerTextPlugin],
       options:{
-        responsive:true, cutout:'68%',
+        responsive:true, maintainAspectRatio:true, aspectRatio:1, cutout:'68%',
         plugins:{
           datalabels:{ display:true },
           legend:{ position:'right', labels:{color:'#e8eaf0', font:{size:11}, padding:10,
@@ -1700,7 +1715,7 @@ function initDashboard() {
       },
       plugins:[centerPlugin2],
       options:{
-        responsive:true, maintainAspectRatio:true, cutout:'62%',
+        responsive:true, maintainAspectRatio:true, aspectRatio:1, cutout:'62%',
         plugins:{
           datalabels:{ display:true },
           legend:{
@@ -1760,7 +1775,7 @@ function initDashboard() {
       responsive:true, maintainAspectRatio:false,
       plugins:{
         datalabels:{
-          anchor:'end', align:'end', color:'#e8eaf0', font:{size:10,weight:'bold'},
+          anchor:'end', align:'end', color:'#222', font:{size:10,weight:'bold'},
           formatter: v => '$'+v.toLocaleString()
         },
         legend:{ labels:{color:'#e8eaf0', padding:14, font:{size:12}} },
@@ -1782,7 +1797,7 @@ function initDashboard() {
     plugins:{
       datalabels:{
         display: ctx => ctx.dataset.data[ctx.dataIndex] > 0,
-        color:'#fff', font:{size:10,weight:'bold'},
+        color:'#222', font:{size:10,weight:'bold'},
         formatter: v => v>0 ? '$'+v : ''
       },
       legend:{ labels:{color:'#e8eaf0', font:{size:11}, padding:10} },
@@ -2067,7 +2082,7 @@ function buildStackedLegend(datasets) {
   var el = document.getElementById('stackedExpLegend');
   if (!el) return;
   el.innerHTML = datasets.map(function(ds){
-    return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#cbd5e1;">' +
+    return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#444;">' +
       '<div style="width:12px;height:12px;background:'+ds.backgroundColor+';border-radius:2px;flex-shrink:0;"></div>'+
       '<span>'+ds.label+'</span></div>';
   }).join('');
@@ -2236,7 +2251,7 @@ function renderPropChart() {
         datalabels: {
           display: function(ctx) { return ctx.datasetIndex === 0 && ctx.dataset.data[ctx.dataIndex] > 0; },
           formatter: function(v) { return '$' + v.toFixed(0); },
-          color: '#fff', font: { size: 10, weight: 'bold' },
+          color: '#222', font: { size: 10, weight: 'bold' },
           anchor: 'center', align: 'center'
         }
       },
@@ -2266,7 +2281,7 @@ function renderPropChart() {
     else if (d.source.includes('Direct')) srcColor = '#10b981';
 
     var statusBadge = d.late_flag 
-      ? '<span style="background:#fef2f2;color:#ef4444;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:700;">⚠️ Late</span>'
+      ? '<span style="background:#fef2f2;color:#444;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:700;">⚠️ Late</span>'
       : '<span style="background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:600;">✓ On Time</span>';
     if (d.host_earnings <= 0) statusBadge = '<span style="background:#fafafa;color:#94a3b8;padding:2px 8px;border-radius:10px;font-size:0.72rem;">No Payout</span>';
 
@@ -2296,7 +2311,7 @@ function renderPropChart() {
   if (lateRooms.length > 0) {
     lsEl.innerHTML = '<div style="padding:12px 16px;background:#fef2f2;border-left:3px solid #ef4444;border-radius:6px;font-size:0.82rem;color:#7f1d1d;">' +
       '<strong>⚠️ Late Payments (' + lateRooms.length + ' room' + (lateRooms.length>1?'s':'') + '):</strong> ' + lateRooms.join(', ') +
-      '<span style="margin-left:8px;color:#b91c1c;">Total late fees: $' + totLate.toFixed(2) + '</span></div>';
+      '<span style="margin-left:8px;color:#444;">Total late fees: $' + totLate.toFixed(2) + '</span></div>';
   } else {
     lsEl.innerHTML = '<div style="padding:10px 16px;background:#f0fdf4;border-left:3px solid #10b981;border-radius:6px;font-size:0.82rem;color:#14532d;">' +
       '✓ No late fees for this property/period.</div>';
