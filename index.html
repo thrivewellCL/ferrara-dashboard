@@ -1450,7 +1450,7 @@ async function checkPw() {
     sessionStorage.setItem('twcl_auth','1');
     document.getElementById('pw-overlay').style.display='none';
     document.getElementById('main-content').style.display='block';
-    initDashboard();
+    setTimeout(initDashboard, 100);
   } else {
     document.getElementById('pw-error').style.display='block';
     document.getElementById('pw-input').value='';
@@ -1461,7 +1461,7 @@ if (sessionStorage.getItem('twcl_auth')==='1') {
   function doUnlock() {
     document.getElementById('pw-overlay').style.display='none';
     document.getElementById('main-content').style.display='block';
-    initDashboard();
+    setTimeout(initDashboard, 100);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', doUnlock);
