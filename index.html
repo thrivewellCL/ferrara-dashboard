@@ -1414,11 +1414,11 @@ function initDashboard() {
   new Chart(document.getElementById('vendorPieChart'), {
     type: 'pie',
     data: {
-      labels: ['PadSplit', 'Airbnb', 'Direct (Zelle / Rent Perfect / Venmo)'],
+      labels: ['PadSplit', 'Airbnb', 'LTR (Rent Perfect)', 'Direct (Zelle / Venmo)'],
       datasets: [{
-        data: [31963, 9500, 37777],
-        backgroundColor: ['#4CAF50', '#FF5722', '#2196F3'],
-        borderColor: ['#2d7a32', '#c84315', '#1565C0'],
+        data: [31963, 9500, 9188, 28589],
+        backgroundColor: ['#4CAF50', '#FF5722', '#9C27B0', '#2196F3'],
+        borderColor: ['#2d7a32', '#c84315', '#6a0080', '#1565C0'],
         borderWidth: 2,
         hoverOffset: 10
       }]
