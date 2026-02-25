@@ -1163,30 +1163,17 @@ function copyChangesSummary() {
     alert('No changes recorded yet. Edit items in the Needs Review tab first.');
     return;
   }
-  let txt = 'FERRARA GROUP — REVIEW CHANGES SUMMARY
-';
-  txt += 'Generated: ' + new Date().toLocaleString() + '
-
-';
+  let txt = 'FERRARA GROUP — REVIEW CHANGES SUMMARY\n';
+  txt += 'Generated: ' + new Date().toLocaleString() + '\n\n';
   for (const [id, v] of Object.entries(data)) {
-    txt += '--- ' + id.toUpperCase() + ' ---
-';
-    txt += 'Status: ' + v.status + '
-';
-    if (v.category) txt += 'Category: ' + v.category + '
-';
-    if (v.property) txt += 'Property: ' + v.property + '
-';
-    if (v.notes) txt += 'Notes: ' + v.notes + '
-';
-    txt += '
-';
+    txt += '--- ' + id.toUpperCase() + ' ---\n';
+    txt += 'Status: ' + v.status + '\n';
+    if (v.category) txt += 'Category: ' + v.category + '\n';
+    if (v.property) txt += 'Property: ' + v.property + '\n';
+    if (v.notes) txt += 'Notes: ' + v.notes + '\n';
+    txt += '\n';
   }
-  navigator.clipboard.writeText(txt).then(() => {
-    alert('Changes copied to clipboard! Paste into chat with Tasklet to process updates.');
-  }).catch(() => {
-    prompt('Copy this text:', txt);
-  });
+  navigator.clipboard.writeText(txt).then(() => alert('Changes copied to clipboard!')).catch(() => alert('Copy failed. Please try again.'));
 }
 
 // ---- Expense Table ----
