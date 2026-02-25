@@ -309,7 +309,15 @@ canvas{max-height:320px}
       <canvas id="propIncomeChart" style="min-height:380px;width:100%"></canvas>
     </div>
     <div class="chart-card">
-      <div class="chart-title">🍩 Expense Breakdown by Category</div>
+      <div class="chart-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span>📊 Expense Breakdown by Category</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button onclick="setExpView('jan')" id="expBtn_jan" style="padding:5px 12px;border-radius:20px;border:2px solid #c9a84c;background:#c9a84c;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">Jan 2026</button>
+          <button onclick="setExpView('feb')" id="expBtn_feb" style="padding:5px 12px;border-radius:20px;border:2px solid #94a3b8;background:transparent;color:#475569;font-size:12px;font-weight:600;cursor:pointer;">Feb 2026 ⚠️</button>
+          <button onclick="setExpView('ytd')" id="expBtn_ytd" style="padding:5px 12px;border-radius:20px;border:2px solid #94a3b8;background:transparent;color:#475569;font-size:12px;font-weight:600;cursor:pointer;">YTD 2026</button>
+        </div>
+      </div>
+      <div id="expPartialNote" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:6px 12px;font-size:12px;color:#92400e;margin:6px 0;">⚠️ Feb 2026 is <strong>partial</strong> — Chase Business Checking statement not yet uploaded. Credit card expenses only.</div>
       <canvas id="expenseDonut" style="width:100%;height:400px;min-height:400px"></canvas>
     </div>
   </div>
@@ -1779,66 +1787,114 @@ function initDashboard() {
 
   // ─── 2. EXPENSE BREAKDOWN ─ Horizontal Bar ─────────────────────────────
   (function(){
-    const expData   = [17849, 1540, 1330, 1005, 850, 600, 559, 503, 503, 93];
-    const expLabels = ['Mortgage','Repairs & Labor','Landscaping','Electric','Cleaning','Other','Internet','Gas','Water','Solar'];
-    const expColors = ['#c9a84c','#60a5fa','#4ade80','#fbbf24','#f472b6','#94a3b8','#a855f7','#f97316','#38bdf8','#22c55e'];
-    const total     = expData.reduce((a,b)=>a+b,0);
-
-    new Chart(document.getElementById('expenseDonut'), {
-      type: 'bar',
-      data: {
-        labels: expLabels,
-        datasets:[{
-          label: 'Amount',
-          data: expData,
-          backgroundColor: expColors,
-          borderRadius: 6,
-          borderSkipped: false,
-          barThickness: 28
-        }]
+    // ── Expense Breakdown – multi-period data ──────────────────────────────────
+    const expDataSets = {
+      jan: {
+        labels: ['Mortgage','Materials & Supplies','Repairs & Labor','Marketing','Landscaping','Legal & Prof.','Cleaning','Internet','Electric','Water','Insurance','VA & Staff','Gas','Software & Tech','Solar','Phone','Business General','Furnishings'],
+        data:   [14682, 2825, 2537, 1720, 1552, 1078, 937, 700, 533, 419, 336, 260, 249, 187, 93, 61, 100, 61]
       },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          outerLabels: false,
-          centerText: false,
-          legend: { display: false },
-          datalabels: {
-            anchor: 'end',
-            align: 'end',
-            color: '#1f2937',
-            font: { size: 12, weight: 'bold' },
-            formatter: (v) => {
-              const pct = ((v/total)*100).toFixed(1);
-              return '$'+v.toLocaleString()+' ('+pct+'%)';
-            }
-          },
-          tooltip: {
-            ...tooltipDefaults,
-            callbacks: {
-              label: ctx => {
-                const pct = ((ctx.parsed.x/total)*100).toFixed(1);
-                return ' '+fmtDollar(ctx.parsed.x)+' — '+pct+'% of total';
+      feb: {
+        labels: ['Materials & Supplies','Internet','Bank Fees','Furnishings','Cleaning','Phone'],
+        data:   [2766, 447, 149, 148, 110, 61]
+      },
+      ytd: {
+        labels: ['Mortgage','Repairs & Labor','Landscaping','Electric','Cleaning','Other','Internet','Gas','Water','Solar'],
+        data:   [17849, 1540, 1330, 1005, 850, 600, 559, 503, 503, 93]
+      }
+    };
+    const expColorPalette = ['#c9a84c','#60a5fa','#4ade80','#fbbf24','#f472b6','#94a3b8','#a855f7','#f97316','#38bdf8','#22c55e','#e11d48','#0ea5e9','#84cc16','#d946ef','#fb923c','#06b6d4','#6366f1','#10b981'];
+
+    function buildExpChart(view) {
+      const ds = expDataSets[view];
+      // sort descending
+      const combined = ds.labels.map((l,i)=>({l,v:ds.data[i]})).sort((a,b)=>b.v-a.v);
+      const labels = combined.map(x=>x.l);
+      const data   = combined.map(x=>x.v);
+      const colors = data.map((_,i)=>expColorPalette[i % expColorPalette.length]);
+      const total  = data.reduce((a,b)=>a+b,0);
+      const maxVal = Math.max(...data);
+      return {labels, data, colors, total, maxVal};
+    }
+
+    let expChartInst = null;
+    function renderExpChart(view) {
+      const {labels, data, colors, total, maxVal} = buildExpChart(view);
+      const height = Math.max(380, labels.length * 42);
+      document.getElementById('expenseDonut').parentElement.style.height = height + 'px';
+
+      // toggle button styles
+      ['jan','feb','ytd'].forEach(v => {
+        const btn = document.getElementById('expBtn_'+v);
+        if (v === view) {
+          btn.style.background = '#c9a84c'; btn.style.borderColor = '#c9a84c'; btn.style.color = '#fff';
+        } else {
+          btn.style.background = 'transparent'; btn.style.borderColor = '#94a3b8'; btn.style.color = '#475569';
+        }
+      });
+
+      // partial note
+      document.getElementById('expPartialNote').style.display = (view === 'feb') ? 'block' : 'none';
+
+      if (expChartInst) expChartInst.destroy();
+      expChartInst = new Chart(document.getElementById('expenseDonut'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets:[{
+            label: 'Amount',
+            data,
+            backgroundColor: colors,
+            borderRadius: 6,
+            borderSkipped: false,
+            barThickness: 28
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            outerLabels: false,
+            centerText: false,
+            legend: { display: false },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#1f2937',
+              font: { size: 12, weight: 'bold' },
+              formatter: (v) => {
+                const pct = ((v/total)*100).toFixed(1);
+                return '$'+v.toLocaleString()+' ('+pct+'%)';
+              }
+            },
+            tooltip: {
+              ...tooltipDefaults,
+              callbacks: {
+                label: ctx => {
+                  const pct = ((ctx.parsed.x/total)*100).toFixed(1);
+                  return ' '+fmtDollar(ctx.parsed.x)+' — '+pct+'% of total';
+                }
               }
             }
-          }
-        },
-        layout: { padding: { right: 140 } },
-        scales: {
-          x: {
-            ticks: { color:'#1f2937', callback: v => '$'+v.toLocaleString() },
-            grid: { color:'rgba(0,0,0,0.06)' },
-            suggestedMax: 20000
           },
-          y: {
-            ticks: { color:'#1f2937', font:{ size:13, weight:'600' } },
-            grid: { display: false }
+          layout: { padding: { right: 160 } },
+          scales: {
+            x: {
+              ticks: { color:'#1f2937', callback: v => '$'+v.toLocaleString() },
+              grid: { color:'rgba(0,0,0,0.06)' },
+              suggestedMax: maxVal * 1.25
+            },
+            y: {
+              ticks: { color:'#1f2937', font:{ size:13, weight:'600' } },
+              grid: { display: false }
+            }
           }
         }
-      }
-    });
+      });
+    }
+
+    window.setExpView = function(view) { renderExpChart(view); };
+    renderExpChart('jan');
   })();
 
   // ─── 3. REVENUE BY PLATFORM (DOUGHNUT) ──────────────────────────────────
