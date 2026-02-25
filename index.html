@@ -1552,6 +1552,13 @@ function initDashboard() {
   Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
   Chart.register(ChartDataLabels);
 
+    // ── Global dark text for all charts ──
+    Chart.defaults.color = '#1f2937';
+    Chart.defaults.plugins.legend.labels.color = '#1f2937';
+    Chart.defaults.scale.ticks.color = '#1f2937';
+    Chart.defaults.scale.title.color = '#1f2937';
+
+
   // Shared tooltip style
   const tooltipDefaults = {
     backgroundColor: 'rgba(10,25,47,0.96)',
@@ -1652,7 +1659,37 @@ function initDashboard() {
   function fmtDollar(v) { return '$' + Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:0}); }
 
   // ─── 1. PROPERTY INCOME VS EXPENSES ─────────────────────────────────────
-  new Chart(document.getElementById('propIncomeChart'), {
+  
+    // Plugin: vertical separators between property groups
+    const propertySeparatorPlugin = {
+        id: 'propertySeparator',
+        afterDraw(chart) {
+            if (chart.config.type !== 'bar') return;
+            const ctx = chart.ctx;
+            const xAxis = chart.scales.x;
+            if (!xAxis || !xAxis.ticks || xAxis.ticks.length < 2) return;
+            
+            ctx.save();
+            ctx.strokeStyle = 'rgba(180,180,180,0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 4]);
+            
+            // Draw between each pair of consecutive ticks (between property groups)
+            for (let i = 0; i < xAxis.ticks.length - 1; i++) {
+                const x1 = xAxis.getPixelForTick(i);
+                const x2 = xAxis.getPixelForTick(i + 1);
+                const midX = (x1 + x2) / 2;
+                ctx.beginPath();
+                ctx.moveTo(midX, chart.chartArea.top);
+                ctx.lineTo(midX, chart.chartArea.bottom);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    };
+    Chart.register(propertySeparatorPlugin);
+
+    new Chart(document.getElementById('propIncomeChart'), {
     type: 'bar',
     data: {
       labels: ['5th Dr','38th Dr','Janice Way','25th St','Grandview','Mesa','13th Ave'],
