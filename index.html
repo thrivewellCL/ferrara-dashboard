@@ -129,8 +129,32 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1b2e;color:#e8eaf
 canvas{max-height:320px}
 @media(max-width:768px){.chart-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}.tab-btn{padding:10px 14px;font-size:12px}}
 </style>
+
+<style>
+#pw-overlay{position:fixed;inset:0;background:#0d1b2e;z-index:9999;display:flex;align-items:center;justify-content:center}
+#pw-box{background:#13253d;border:1px solid #c9a84c;border-radius:16px;padding:48px 40px;text-align:center;max-width:400px;width:90%}
+#pw-logo{font-size:26px;font-weight:700;color:#c9a84c;margin-bottom:8px}
+#pw-sub{color:#8899aa;font-size:14px;margin-bottom:32px}
+#pw-input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #1e3a5f;background:#0d1b2e;color:#fff;font-size:16px;margin-bottom:16px;outline:none;text-align:center;letter-spacing:2px}
+#pw-input:focus{border-color:#c9a84c}
+#pw-btn{width:100%;padding:12px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#f0c040);border:none;color:#0d1b2e;font-weight:700;font-size:15px;cursor:pointer}
+#pw-btn:hover{opacity:0.9}
+#pw-error{color:#f87171;font-size:13px;margin-top:12px;display:none}
+#main-content{display:none}
+</style>
 </head>
 <body>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <div id="pw-logo">🏠 ThriveWell Co-Living</div>
+    <div id="pw-sub">Real Estate Dashboard — Secure Access</div>
+    <input id="pw-input" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPw()">
+    <button id="pw-btn" onclick="checkPw()">Unlock Dashboard</button>
+    <div id="pw-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+<div id="main-content">
+
 <div class="top-bar">
   <div class="logo">Ferrara Group <span>Real Estate Dashboard</span></div>
   <div class="timestamp">📅 As of Feb 24, 2026 · Data partially complete (Feb checking pending)</div>
@@ -199,7 +223,14 @@ canvas{max-height:320px}
 
   <div class="note-banner">ℹ️ <strong>Note:</strong> Income totals are partially unassigned. PadSplit Feb numbers are through 2/24. Airbnb Feb payouts mostly arrive in March. Inter-company transfer ($7,500) and furniture reimbursement ($200) excluded from income.</div>
 
-  <div class="chart-row">
+  
+    <!-- Monthly Income / Expenses / Profit -->
+    <div class="chart-card" style="margin-bottom:20px">
+      <div class="chart-title">📈 Monthly P&L Summary — Income vs Expenses vs Profit</div>
+      <canvas id="monthlyPLChart" height="90"></canvas>
+    </div>
+
+    <div class="chart-row">
     <div class="chart-card">
       <div class="chart-title">📈 Income vs Expenses by Property (Jan 2026)</div>
       <canvas id="propIncomeChart"></canvas>
@@ -1258,7 +1289,7 @@ function renderExpenses(search, cat, prop, month) {
 }
 
 // ---- Charts ----
-window.addEventListener('DOMContentLoaded', function() {
+function initDashboard() {
   updatePendingCount();
   renderExpenses('','','','all');
   updateUnresolvedTotal();
@@ -1340,8 +1371,36 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   // Restore localStorage changes
+
+  // Monthly P&L Summary Chart
+  new Chart(document.getElementById('monthlyPLChart'), {
+    type: 'bar',
+    data: {
+      labels: ['January 2026', 'February 2026 (est.)'],
+      datasets: [
+        {label:'Gross Income',   data:[36143, 38200], backgroundColor:'rgba(74,222,128,0.85)', order:2},
+        {label:'Total Expenses', data:[12275, 11800], backgroundColor:'rgba(248,113,113,0.75)', order:2},
+        {label:'Net Profit',     data:[10396,  9800], backgroundColor:'rgba(201,168,76,0.9)',   order:2},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{labels:{color:'#e8eaf0'}},
+        tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.y.toLocaleString()}}
+      },
+      scales:{
+        x:{ticks:{color:'#8899aa'},grid:{color:'#1e3a5f'}},
+        y:{ticks:{color:'#8899aa',callback:v=>'$'+v.toLocaleString()},grid:{color:'#1e3a5f'}}
+      }
+    }
+  });
+
+  // YTD summary card values (Jan only so far)
+  // These are baked in - will update when Feb is finalized
+
   restoreChanges();
-});
+}
 
 function restoreChanges() {
   const data = loadChanges();
@@ -1380,5 +1439,32 @@ function updateUnresolvedTotal() {
   if (el) el.textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits:2});
 }
 </script>
+</div><!-- end main-content -->
+
+<script>
+async function checkPw() {
+  const val = document.getElementById('pw-input').value;
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if (hash === 'f8779730a98f3f921620d9f0a45dedea858a8e9991104a8703f43125d9ff8b31') {
+    sessionStorage.setItem('twcl_auth','1');
+    document.getElementById('pw-overlay').style.display='none';
+    document.getElementById('main-content').style.display='block';
+    initDashboard();
+  } else {
+    document.getElementById('pw-error').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+// Auto-unlock if already authenticated this session
+if (sessionStorage.getItem('twcl_auth')==='1') {
+  document.addEventListener('DOMContentLoaded',function(){
+    document.getElementById('pw-overlay').style.display='none';
+    document.getElementById('main-content').style.display='block';
+    initDashboard();
+  });
+}
+</script>
+
 </body>
 </html>
