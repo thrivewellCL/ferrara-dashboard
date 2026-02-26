@@ -2603,13 +2603,11 @@ function rebuildStackedDataFromExpenses() {
   });
   
   var propArray = propOrder.filter(p => props.has(p));
-  var monthArray = Array.from(months).sort().map(m => {
-    var d = new Date(m + '-01'); return d.toLocaleString('en-US', {month:'short', year:'numeric'});
-  });
+  var monthArray = Array.from(months).sort(); // Keep YYYY-MM for lookups
   
   stackedData.properties = propArray;
-  stackedData.propertyIds = propArray; // Use actual names, not IDs
-  stackedData.months = monthArray;
+  stackedData.propertyIds = propArray;
+  stackedData.months = monthArray; // YYYY-MM format e.g. "2026-02"
   stackedData.byPropertyMonth = byPropMonth;
 }
 
@@ -2629,7 +2627,11 @@ function buildStackedDatasets(view) {
   var datasets = [];
   if (view === 'monthly') {
     var labels = [];
-    months.forEach(function(m){ props.forEach(function(p){ labels.push(p + ' (' + m.split(' ')[0] + ')'); }); });
+    months.forEach(function(m){ 
+      var d = new Date(m + '-01');
+      var mLabel = d.toLocaleString('en-US', {month:'short', year:'numeric'}).split(' ')[0];
+      props.forEach(function(p){ labels.push(p + ' (' + mLabel + ')'); }); 
+    });
     allCats.forEach(function(cat) {
       var vals = [];
       months.forEach(function(m){ pIds.forEach(function(pid){ var d=stackedData.byPropertyMonth[pid][m]||{}; vals.push(d[cat]||0); }); });
