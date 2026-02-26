@@ -413,13 +413,6 @@ canvas{max-height:320px}
     <button class="filter-btn" onclick="filterExpMonth(this,'2026-02')">Feb 2026</button>
     <select class="review-select" id="expCatFilter" onchange="filterExpenses()" style="padding:7px 10px;font-size:13px">
       <option value="">All Categories</option>
-      <option>Mortgage/Loan Payments</option><option>Utilities - Electric</option><option>Utilities - Water</option>
-      <option>Utilities - Gas</option><option>Utilities - Internet</option><option>Utilities - Solar</option>
-      <option>Cleaning</option><option>Landscaping &amp; Junk Removal</option><option>Repairs &amp; Labor</option>
-      <option>Materials &amp; Supplies</option><option>Furnishings</option><option>Marketing &amp; Photography</option>
-      <option>Legal &amp; Professional</option><option>Insurance</option><option>Software &amp; Tech</option>
-      <option>Travel</option><option>Phone</option><option>Personal</option><option>Bank Fees &amp; Interest</option>
-      <option>VA &amp; Staff</option><option>Business General</option><option>Rent Income</option>
     </select>
     <select class="review-select" id="expPropFilter" onchange="filterExpenses()" style="padding:7px 10px;font-size:13px">
       <option value="">All Properties</option>
@@ -1557,6 +1550,50 @@ let currentMonth = 'all';
 let currentCat = '';
 let currentProp = '';
 
+function buildCatDropdown() {
+  var sel = document.getElementById('expCatFilter');
+  if (!sel) return;
+  var cats = new Set();
+  (expenses || []).forEach(function(e) { if (e.cat) cats.add(e.cat); });
+  // Keep current selection
+  var current = sel.value;
+  sel.innerHTML = '<option value="">All Categories</option>';
+  Array.from(cats).sort().forEach(function(c) {
+    var o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    if (c === current) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+// Called when clicking a bar on the Expenses chart - jumps to All Transactions filtered by category
+function drillDownToCategory(cat, period) {
+  // Switch to all-transactions tab
+  showTab('expenses');
+  // Set category filter
+  var sel = document.getElementById('expCatFilter');
+  if (sel) {
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === cat) { sel.selectedIndex = i; break; }
+    }
+  }
+  // Set month filter based on period
+  if (period && period !== 'ytd') {
+    var btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(function(b) {
+      b.classList.remove('active');
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(period)) b.classList.add('active');
+    });
+    currentMonth = period;
+  }
+  filterExpenses();
+  // Scroll to the table
+  setTimeout(function() {
+    var t = document.getElementById('expBody');
+    if (t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 200);
+}
+
 function filterExpenses() {
   const search = document.getElementById('expSearch').value.toLowerCase();
   const cat = document.getElementById('expCatFilter').value;
@@ -1609,6 +1646,8 @@ function initDashboard() {
   updatePendingCount();
   renderExpenses('','','','all');
   updateUnresolvedTotal();
+  // Build category dropdown from actual data
+  buildCatDropdown();
   // Chart defaults
   // ─── GLOBAL CHART DEFAULTS ────────────────────────────────────────────────
   Chart.defaults.color = '#1f2937';
@@ -2535,6 +2574,13 @@ function initCatExpenseChart(period) {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
+      onClick: function(evt, elements) {
+        if (elements && elements.length > 0) {
+          var idx = elements[0].index;
+          var clickedCat = catExpenseChartInstance.data.labels[idx];
+          drillDownToCategory(clickedCat, currentCatExpPeriod);
+        }
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
