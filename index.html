@@ -321,7 +321,7 @@ canvas{max-height:320px}
   <button class="tab-btn" onclick="showTab('review')" id="tab-review">🔴 Needs Review</button>
   <button class="tab-btn" onclick="showTab('optimize')">💰 Optimize</button>
   
-  <button class="tab-btn" onclick="showTab('howto')">📋 How to Update</button>
+  <button class="tab-btn" onclick="showTab('tab-upload')">📋 How to Update</button>
 </div>
 
 
@@ -1409,6 +1409,40 @@ canvas{max-height:320px}
       <li><strong>Platform Fees</strong> = PadSplit booking fees (for new members) + service fee % + transaction fee % — not shown on bar but in table</li>
       <li><strong>Direct/LTR rooms</strong> = Net equals gross (no platform fee deduction); Venmo/Zelle/Rent Perfect amounts as received</li>
       <li><strong>⚠️ Feb 2026 data is partial</strong> — pulled through 2/24. Final numbers will be slightly higher once month closes.</li>
+    </ul>
+  </div>
+</div>
+
+
+
+<div id="tab-upload" class="tab-content">
+  <h2 style="color:#c9a84c;margin-bottom:20px">📤 Upload Your Data Files</h2>
+  <p style="font-size:16px;color:#475569;line-height:1.6;margin-bottom:24px;">Keep your dashboard updated by uploading new CSV and PDF files to the <code style="background:#0d1b2e;padding:4px 8px;border-radius:4px;color:#c9a84c">/data</code> folder.</p>
+  
+  <div class="how-to-card">
+    <div class="how-to-title">🚀 How to Upload in 3 Steps</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div class="step-text">Go to your GitHub repository: <a href="https://github.com/thrivewellCL/dashboard" target="_blank" style="color:#c9a84c;text-decoration:underline;">github.com/thrivewellCL/dashboard</a></div></li>
+      <li><span class="step-num">2</span><div class="step-text">Navigate to the <strong><code style="background:#0d1b2e;padding:2px 6px;border-radius:4px;color:#c9a84c">data</code></strong> folder</div></li>
+      <li><span class="step-num">3</span><div class="step-text">Click <strong>"Add file"</strong> → <strong>"Upload files"</strong>, select your CSV or PDF, then commit</div></li>
+    </ul>
+  </div>
+  
+  <div class="how-to-card" style="border-left:4px solid #34d399;">
+    <div class="how-to-title">✅ What to Upload</div>
+    <ul class="step-list" style="margin:0;">
+      <li><span class="step-num" style="background:#34d399">✓</span><div class="step-text"><strong>CSV files</strong> — Bank statements, transaction data, income reports</div></li>
+      <li><span class="step-num" style="background:#34d399">✓</span><div class="step-text"><strong>PDF files</strong> — Documents, reports, statements</div></li>
+    </ul>
+    <p style="margin:12px 0 0 0;color:#475569;font-size:14px;">Your dashboard will reflect changes within a few minutes of upload.</p>
+  </div>
+  
+  <div class="how-to-card" style="border-left:4px solid #fbbf24;">
+    <div class="how-to-title">💡 Tips</div>
+    <ul class="step-list" style="margin:0;">
+      <li><span class="step-num" style="background:#fbbf24;color:#000;">?</span><div class="step-text">Upload files <strong>before the 3rd of each month</strong> for timely P&L reports</div></li>
+      <li><span class="step-num" style="background:#fbbf24;color:#000;">?</span><div class="step-text">You can <strong>replace existing files</strong> — just use the same filename</div></li>
+      <li><span class="step-num" style="background:#fbbf24;color:#000;">?</span><div class="step-text">Check the <strong>"How to Update"</strong> tab for detailed monthly workflow</div></li>
     </ul>
   </div>
 </div>
