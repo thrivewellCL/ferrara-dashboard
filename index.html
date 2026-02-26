@@ -2685,6 +2685,11 @@ function selectPropMonth(month) {
   ['2026-01','2026-02','YTD'].forEach(function(m) {
     var btn = document.getElementById('pm-' + m);
     if (btn) { btn.style.background = '#e2e8f0'; btn.style.color = '#475569'; }
+  });
+  var activeBtn = document.getElementById('pm-' + month);
+  if (activeBtn) { activeBtn.style.background = '#3b82f6'; activeBtn.style.color = '#fff'; }
+  renderPropChart();
+}
 
 // Initialize first property on page load
 setTimeout(function() {
@@ -2692,10 +2697,6 @@ setTimeout(function() {
     selectPropChart('p5');
   }
 }, 300);
-  var activeBtn = document.getElementById('pm-' + month);
-  if (activeBtn) { activeBtn.style.background = '#3b82f6'; activeBtn.style.color = '#fff'; }
-  renderPropChart();
-}
 
 function renderPropChart() {
   var pid = currentPropId;
