@@ -340,7 +340,10 @@ canvas{max-height:320px}
 
     <div class="chart-row">
     <div class="chart-card">
-      <div class="chart-title">📈 Income vs Expenses by Property (YTD 2026)</div>
+      <div class="chart-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span>📈 Income vs Expenses by Property</span>
+        <select id="propPeriodDropdown" onchange="renderPropIncomeChart(this.value)" style="padding:6px 14px;border-radius:8px;border:1px solid #cbd5e1;font-size:13px;font-weight:600;background:#fff;color:#1f2937;cursor:pointer;"></select>
+      </div>
       <canvas id="propIncomeChart" style="min-height:500px;width:100%"></canvas>
     </div>
     <div class="chart-card">
@@ -1799,8 +1802,10 @@ function initDashboard() {
 
     window._dashInc  = {};   // { 'YYYY-MM': total }
     window._dashExp  = {};   // { 'YYYY-MM': total }
-    window._dashPropInc = {}; // { propName: total }
-    window._dashPropExp = {}; // { propName: total }
+    window._dashPropInc = {}; // { propName: total } — YTD
+    window._dashPropExp = {}; // { propName: total } — YTD
+    window._dashPropIncByMonth = {}; // { 'YYYY-MM': { propName: total } }
+    window._dashPropExpByMonth = {}; // { 'YYYY-MM': { propName: total } }
     window._dashPlat = {};   // { platform: total }
 
     // Pass 1: determine the date range from bank statement (non-RentPerfect) data
@@ -1824,11 +1829,17 @@ function initDashboard() {
           // (VCI Clearing in Checking covers the same money for monthly totals — no double count)
           if (t.prop && ym >= _stmtMinYM && ym <= _stmtMaxYM) {
             window._dashPropInc[t.prop] = (window._dashPropInc[t.prop] || 0) + t.amount;
+            if (!window._dashPropIncByMonth[ym]) window._dashPropIncByMonth[ym] = {};
+            window._dashPropIncByMonth[ym][t.prop] = (window._dashPropIncByMonth[ym][t.prop] || 0) + t.amount;
           }
           return;
         }
         window._dashInc[ym]  = (window._dashInc[ym]  || 0) + t.amount;
-        if (t.prop) window._dashPropInc[t.prop] = (window._dashPropInc[t.prop] || 0) + t.amount;
+        if (t.prop) {
+          window._dashPropInc[t.prop] = (window._dashPropInc[t.prop] || 0) + t.amount;
+          if (!window._dashPropIncByMonth[ym]) window._dashPropIncByMonth[ym] = {};
+          window._dashPropIncByMonth[ym][t.prop] = (window._dashPropIncByMonth[ym][t.prop] || 0) + t.amount;
+        }
         var plat = 'Direct (Zelle / Other)';
         if (t.desc.indexOf('PadSplit') >= 0)                                                  plat = 'PadSplit';
         else if (t.desc.indexOf('VCI Clearing') >= 0)                                         plat = 'RentPerfect / VCI';
@@ -1840,7 +1851,11 @@ function initDashboard() {
       } else {
         if (_isCC(t.desc)) return;
         window._dashExp[ym]  = (window._dashExp[ym]  || 0) + t.amount;
-        if (t.prop) window._dashPropExp[t.prop] = (window._dashPropExp[t.prop] || 0) + t.amount;
+        if (t.prop) {
+          window._dashPropExp[t.prop] = (window._dashPropExp[t.prop] || 0) + t.amount;
+          if (!window._dashPropExpByMonth[ym]) window._dashPropExpByMonth[ym] = {};
+          window._dashPropExpByMonth[ym][t.prop] = (window._dashPropExpByMonth[ym][t.prop] || 0) + t.amount;
+        }
       }
     });
 
@@ -1882,66 +1897,113 @@ function initDashboard() {
     };
     Chart.register(propertySeparatorPlugin);
 
-  // Build property income/expense from file data (all years combined for overview)
-  (function(){
+  // ─── Property Income vs Expenses — dynamic by month/YTD ─────────────────
+  var _propIncChartInst = null;
+  function renderPropIncomeChart(period) {
     var PROP_ORDER = ['5th Dr','38th Dr','Janice Way','25th St','Grandview','Mesa','13th Ave'];
-    var allProps = PROP_ORDER.filter(function(p){
-      return window._dashPropInc[p] || window._dashPropExp[p];
-    });
-    // If no assigned data yet, fall back to all keys
-    if (!allProps.length) {
-      allProps = Object.keys(Object.assign({}, window._dashPropInc, window._dashPropExp));
-    }
-    var incData = allProps.map(function(p){ return Math.round(window._dashPropInc[p] || 0); });
-    var expData = allProps.map(function(p){ return Math.round(window._dashPropExp[p] || 0); });
-    var maxVal  = Math.max.apply(null, incData.concat(expData)) * 1.25 || 7000;
 
-    new Chart(document.getElementById('propIncomeChart'), {
-    type: 'bar',
-    data: {
-      labels: allProps,
-      datasets: [
-        {
-          label:'Income (YTD)',
-          data: incData,
-          backgroundColor: ctx => {
-            const g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
-            g.addColorStop(0,'rgba(74,222,128,0.95)'); g.addColorStop(1,'rgba(34,197,94,0.5)');
-            return g;
-          },
-          borderColor:'rgba(74,222,128,0.9)', borderWidth:1, borderRadius:6, borderSkipped:false
-        },
-        {
-          label:'Expenses (YTD)',
-          data: expData,
-          backgroundColor: ctx => {
-            const g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
-            g.addColorStop(0,'rgba(248,113,113,0.95)'); g.addColorStop(1,'rgba(220,38,38,0.5)');
-            return g;
-          },
-          borderColor:'rgba(248,113,113,0.9)', borderWidth:1, borderRadius:6, borderSkipped:false
-        }
-      ]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins: {
-        datalabels: {
-          anchor:'end', align:'end', color:'#222', font: { size: 12, color: '#1f2937',weight:'bold'},
-          formatter: v => '$'+v.toLocaleString()
-        },
-        legend:{ labels:{color:'#1f2937', padding:16, font:{size:12}} },
-        tooltip: { ...tooltipDefaults, callbacks:{
-          label: ctx => ` ${ctx.dataset.label}: ${fmtDollar(ctx.parsed.y)}`
-        }}
-      },
-      scales:{
-        x:{ticks:{color:'#1f2937'}, grid:{color:'rgba(0,0,0,0.08)'}},
-        y:{ticks:{color:'#1f2937',callback:v=>'$'+v.toLocaleString()}, grid:{color:'rgba(0,0,0,0.08)'},
-           suggestedMax: maxVal}
-      }
+    // Build incMap / expMap for the selected period
+    var incMap = {}, expMap = {};
+    if (period === 'ytd') {
+      incMap = window._dashPropInc || {};
+      expMap = window._dashPropExp || {};
+    } else {
+      incMap = (window._dashPropIncByMonth && window._dashPropIncByMonth[period]) || {};
+      expMap = (window._dashPropExpByMonth && window._dashPropExpByMonth[period]) || {};
     }
-  });
+
+    // Filter to properties that have any data
+    var allProps = PROP_ORDER.filter(function(p){ return incMap[p] || expMap[p]; });
+    if (!allProps.length) {
+      allProps = Object.keys(Object.assign({}, incMap, expMap));
+    }
+
+    var incData = allProps.map(function(p){ return Math.round(incMap[p] || 0); });
+    var expData = allProps.map(function(p){ return Math.round(expMap[p] || 0); });
+    var maxVal  = Math.max.apply(null, incData.concat(expData).concat([0])) * 1.25 || 7000;
+
+    // Build label suffix
+    var labelSuffix = period === 'ytd' ? 'YTD' : (function(){
+      var d = new Date(period + '-15');
+      return d.toLocaleString('en-US',{month:'short',year:'numeric'});
+    }());
+
+    if (_propIncChartInst) { _propIncChartInst.destroy(); _propIncChartInst = null; }
+    _propIncChartInst = new Chart(document.getElementById('propIncomeChart'), {
+      type: 'bar',
+      data: {
+        labels: allProps,
+        datasets: [
+          {
+            label: 'Income (' + labelSuffix + ')',
+            data: incData,
+            backgroundColor: function(ctx){
+              var g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
+              g.addColorStop(0,'rgba(74,222,128,0.95)'); g.addColorStop(1,'rgba(34,197,94,0.5)');
+              return g;
+            },
+            borderColor:'rgba(74,222,128,0.9)', borderWidth:1, borderRadius:6, borderSkipped:false
+          },
+          {
+            label: 'Expenses (' + labelSuffix + ')',
+            data: expData,
+            backgroundColor: function(ctx){
+              var g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
+              g.addColorStop(0,'rgba(248,113,113,0.95)'); g.addColorStop(1,'rgba(220,38,38,0.5)');
+              return g;
+            },
+            borderColor:'rgba(248,113,113,0.9)', borderWidth:1, borderRadius:6, borderSkipped:false
+          }
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          datalabels: {
+            anchor:'end', align:'end', color:'#222', font:{size:12,weight:'bold'},
+            formatter: function(v){ return '$'+v.toLocaleString(); }
+          },
+          legend:{ labels:{color:'#1f2937', padding:16, font:{size:12}} },
+          tooltip: { callbacks:{
+            label: function(ctx){ return ' '+ctx.dataset.label+': $'+ctx.parsed.y.toLocaleString(); }
+          }}
+        },
+        scales:{
+          x:{ticks:{color:'#1f2937'}, grid:{color:'rgba(0,0,0,0.08)'}},
+          y:{ticks:{color:'#1f2937',callback:function(v){return '$'+v.toLocaleString();}}, grid:{color:'rgba(0,0,0,0.08)'}, suggestedMax:maxVal}
+        }
+      }
+    });
+  }
+
+  // Populate dropdown and render default (YTD)
+  (function(){
+    var dd = document.getElementById('propPeriodDropdown');
+    if (!dd) return;
+
+    // Collect all months that have any property data
+    var allMonths = Array.from(new Set(
+      Object.keys(window._dashPropIncByMonth || {}).concat(Object.keys(window._dashPropExpByMonth || {}))
+    )).sort();
+
+    // Add individual month options
+    allMonths.forEach(function(ym){
+      var d = new Date(ym + '-15');
+      var lbl = d.toLocaleString('en-US',{month:'long',year:'numeric'});
+      var opt = document.createElement('option');
+      opt.value = ym; opt.textContent = lbl;
+      dd.appendChild(opt);
+    });
+
+    // Add YTD option
+    var ytdOpt = document.createElement('option');
+    var curYear = (window._dashCurYear || new Date().getFullYear().toString());
+    ytdOpt.value = 'ytd'; ytdOpt.textContent = 'YTD ' + curYear;
+    dd.appendChild(ytdOpt);
+
+    // Default to YTD
+    dd.value = 'ytd';
+    renderPropIncomeChart('ytd');
   })();
 
   // ─── 2. EXPENSE BREAKDOWN ─ Horizontal Bar by Category ──────────────────
