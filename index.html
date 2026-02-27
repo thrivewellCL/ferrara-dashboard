@@ -1803,14 +1803,28 @@ function initDashboard() {
     window._dashPropExp = {}; // { propName: total }
     window._dashPlat = {};   // { platform: total }
 
+    // Pass 1: determine the date range from bank statement (non-RentPerfect) data
+    var _stmtYMs = [];
+    (typeof expensesAutoLoaded !== 'undefined' ? expensesAutoLoaded : []).forEach(function(t) {
+      if (!t.date || t.acct === 'RentPerfect') return;
+      _stmtYMs.push(t.date.substring(0, 7));
+    });
+    _stmtYMs.sort();
+    var _stmtMinYM = _stmtYMs.length ? _stmtYMs[0] : '2026-01';
+    var _stmtMaxYM = _stmtYMs.length ? _stmtYMs[_stmtYMs.length - 1] : '2026-12';
+
+    // Pass 2: main aggregation — RentPerfect filtered to statement date range
     (typeof expensesAutoLoaded !== 'undefined' ? expensesAutoLoaded : []).forEach(function(t) {
       if (!t.date) return;
       var ym = t.date.substring(0, 7);
       if (t.income) {
         if (t.acct === 'RentPerfect') {
-          // RentPerfect has property tags - use for property breakdown only
-          // (VCI Clearing in Checking covers the same money for monthly totals - no double count)
-          if (t.prop) window._dashPropInc[t.prop] = (window._dashPropInc[t.prop] || 0) + t.amount;
+          // RentPerfect has property tags — use for per-property breakdown only
+          // Filter to same date range as bank statements to avoid mixing historical data with current expenses
+          // (VCI Clearing in Checking covers the same money for monthly totals — no double count)
+          if (t.prop && ym >= _stmtMinYM && ym <= _stmtMaxYM) {
+            window._dashPropInc[t.prop] = (window._dashPropInc[t.prop] || 0) + t.amount;
+          }
           return;
         }
         window._dashInc[ym]  = (window._dashInc[ym]  || 0) + t.amount;
