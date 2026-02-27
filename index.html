@@ -9,7 +9,7 @@
 
 
 
-<script src="./data/auto-load-data.js"></script>
+<script src="./data/auto-load-data.js?v=20260227b"></script>
 </head>
 <body>
 <style>
@@ -245,7 +245,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1f293
 .note-banner{background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:12px 16px;font-size:13px;color:#1d4ed8;margin-bottom:16px}
 .warn-row td{background:#fef9ec !important}
 .warn-row td:first-child::before{content:"⚠️ ";font-size:12px}
-canvas{max-height:320px}
+/* canvas max-height removed - charts need dynamic height */
 @media(max-width:768px){.chart-row{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}.tab-btn{padding:10px 14px;font-size:12px}}
 
 /* ── Overview White Theme ── */
@@ -312,6 +312,11 @@ canvas{max-height:320px}
   </div>
 
   <div class="note-banner">ℹ️ <strong>Note:</strong> Income totals are partially unassigned. PadSplit Feb numbers are through 2/24. Airbnb Feb payouts mostly arrive in March. Inter-company transfer ($7,500) and furniture reimbursement ($200) excluded from income.</div>
+  <!-- Mortgage Payment Note -->
+  <div class="note-banner" style="background:#fef9ec;border-color:#f59e0b;color:#92400e;margin-bottom:12px;">
+    📌 <strong>Tax Note — Janice Way Mortgage:</strong> Mountain America loan (~$3,428–$3,460/mo) was accidentally paid <em>twice per month</em> in late 2025, resulting in a pre-payment credit. <strong>No mortgage payments were due in Jan–Feb 2026</strong> — next payment scheduled March 1, 2026. Both Dec 2025 double-payments are tax-deductible. This loan is paid directly via Mountain America (not Chase checking), so it won't appear in checking statements.
+  </div>
+
 
   
     <!-- Monthly Income / Expenses / Profit -->
