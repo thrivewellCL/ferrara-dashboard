@@ -9,7 +9,7 @@
 
 
 
-<script src="./data/auto-load-data.js?v=20260227b"></script>
+<script src="./data/auto-load-data.js?v=20260228a"></script>
 </head>
 <body>
 <style>
@@ -357,7 +357,7 @@ canvas{max-height:320px}
         <select id="expPeriodDropdown" onchange="expPeriodChanged()" style="padding:6px 14px;border-radius:8px;border:1px solid #cbd5e1;font-size:13px;font-weight:600;background:#fff;color:#1f2937;cursor:pointer;"></select>
       </div>
       <div id="expPartialNote" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:6px 12px;font-size:12px;color:#92400e;margin:6px 0;">⚠️ Feb 2026 is <strong>partial</strong> — Chase Business Checking statement not yet uploaded. Credit card expenses only.</div>
-      <div id="expenseDonutWrap" style="position:relative;"><canvas id="expenseDonut" style="width:100%;height:100%;"></canvas></div>
+      <div id="expenseDonutWrap" style="position:relative;min-height:200px;"><canvas id="expenseDonut" style="width:100%;height:100%;"></canvas></div>
     </div>
   </div>
   <!-- Revenue by Platform Pie Chart -->
@@ -1441,6 +1441,17 @@ function showTab(id) {
       initCatExpenseChart(currentCatExpPeriod || 'ytd');
     }, 150);
   }
+  if (id === 'utilities') {
+    setTimeout(function(){
+      if (window._utilChartFn) window._utilChartFn();
+    }, 100);
+  }
+  if (id === 'overview') {
+    setTimeout(function(){
+      if (window.initExpBreakdownChart) window.initExpBreakdownChart();
+      if (window.renderPropIncomeChart) window.renderPropIncomeChart();
+    }, 100);
+  }
 }
 
 // ---- Collapsible ----
@@ -2352,9 +2363,11 @@ function initDashboard() {
   });
 
   // ─── 6. UTILITY STACKED (UTILITIES TAB) ─────────────────────────────────
-  const utilCtx = document.getElementById('utilityStackChart');
-  if(utilCtx){
-    new Chart(utilCtx, {
+  window._utilChartFn = function() {
+    var utilCtx2 = document.getElementById('utilityStackChart');
+    if (!utilCtx2) return;
+    if (window._utilChartInst) { try { window._utilChartInst.destroy(); } catch(e){} window._utilChartInst = null; }
+    window._utilChartInst = new Chart(utilCtx2, {
       type:'bar',
       data:{
         labels:['5th Dr','38th Dr','Janice Way','25th St','Grandview'],
@@ -2368,7 +2381,11 @@ function initDashboard() {
       },
       options: utilShared
     });
-  }
+    return window._utilChartInst;
+  };
+  // Initialize utility chart if utilities tab is active
+  const utilCtx = document.getElementById('utilityStackChart');
+  if(utilCtx){ window._utilChartFn(); }
 
   // ─── 7. MONTHLY P&L — from file data, multi-year ready ──────────────────────────────────────
   (function(){
